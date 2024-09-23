@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$(dirname "$0")/.."
+
+git subtree pull -P absindx/SNES-TestRoms https://github.com/absindx/SNES-TestRoms.git main
