@@ -175,15 +175,20 @@ a8()
     bne     +
         jmp     EndVBlankRoutine
     +
+        // Clear VBlank flag.
+        //  * Prevents the NMI ISR from executing VBlank code during lag-frames
+        //  * Signals to the main-loop that the VBlank routine has been executed.
+        //
+        // (Can be placed after the `VBlank` macro if the VBlank macro WILL NEVER take more than
+        //  260 scanlines of execution time)
+        stz.w   __vBlankFlag
+
 
         // Execute VBlank routine
         VBlank()
 
 
-        // Clear VBlank flag
-        // (signal to the main-loop that the VBlank routine has been executed)
         assert8a()
-        stz.w   __vBlankFlag
 
 
         if {defined VBLANK_READS_JOYPAD} {
