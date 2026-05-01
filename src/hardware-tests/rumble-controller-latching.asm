@@ -15,7 +15,7 @@
 //    https://github.com/nesdev-org/MesenCE/blob/4b8669d34bba11b4dae057ac0b234714a7f7638d/Core/SNES/Input/SnesRumbleController.cpp#L28
 //
 //
-// This test contains 3 different write tests to determine the latching
+// This test contains 4 different write tests to determine the latching
 // behaviour of a real Rumble Controller:
 //
 //  * **D-PAD*: Writes 16 bits of data after auto-read has completed.
@@ -24,6 +24,15 @@
 //    then writes the final 8 bits of data.
 //
 //  * **L/R**:  Write 16 bits of data then latches the controller.
+//
+//  * **SELECT**: Tests if the rumble controller clears the internal 16-bit
+//    shift register after activating the rumble motors.
+//
+//    It writes `$727200` to the shift register.
+//      * If the shift register is cleared after activating the motors, the SR
+//        will be `$0000` and the motors will remain active.
+//      * If the shift register is not cleared after activating the motors, the
+//        SR will be `$7200` and the motors will stop.
 //
 // If the controller continues to rumble after the buttons have been released,
 // the **START** button will send a no-rumble command to the rumble controller.
@@ -58,7 +67,7 @@ define ROM_SIZE = 1
 define ROM_SPEED = fast
 define REGION = Japan
 define ROM_NAME = "RUMBLE CONTROLLER"
-define VERSION = 1
+define VERSION = 2
 
 architecture wdc65816-strict
 
@@ -181,6 +190,39 @@ function Write16Latch {
 }
 
 
+// Test if the internal 16 bit shift register is cleared after
+// the rumble motors are active (SELECT test).
+//
+// IN: A = rumble data
+a8()
+i16()
+// DB = $80
+code()
+function SrClearOnRumbleTest {
+    lda.b   #RUMBLE_SENTRY
+    jsr     WriteIoByte
+
+    lda.b   #RUMBLE_SENTRY
+    jsr     WriteIoByte
+
+    // Write 8 zero bits really quickly
+    stz.w   WRIO
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+    bit.w   JOYSER0
+
+    lda.b   #0xff
+    sta.w   WRIO
+
+    rts
+}
+
+
 // Writes 8 bits of data to the rumble controller.
 //
 // NOTE: This is not the fastest way to write the data.
@@ -224,13 +266,15 @@ TestInstructions:
     db "\n"
     db "\n"
     db "\n"
-    db "D-PAD: Write normally\n"
+    db "D-PAD:  Write normally\n"
     db "\n"
-    db "ABXY:  Latch after 8 bits\n"
+    db "ABXY:   Latch after 8 bits\n"
     db "\n"
-    db "L/R:   Latch after 16 bits\n"
+    db "L/R:    Latch after 16 bits\n"
     db "\n"
-    db "START: Stop rumble\n"
+    db "SELECT: SR cleared test\n"
+    db "\n"
+    db "START:  Stop rumble\n"
     db 0
 
 
@@ -299,6 +343,10 @@ function RunTest {
 
 
     lda.w   joypadCurrent + 1
+    bit.b   #JOYH.select
+    beq     +
+        jmp     SrClearOnRumbleTest
+    +
     bit.b   #JOYH.start
     beq     +
         lda.b   #0
