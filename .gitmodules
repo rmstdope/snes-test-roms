@@ -1,0 +1,3 @@
+[submodule "undisbeliever-inidisp/sources/bass-untech"]
+	path = undisbeliever-inidisp/sources/bass-untech
+	url = https://github.com/undisbeliever/bass-untech.git
