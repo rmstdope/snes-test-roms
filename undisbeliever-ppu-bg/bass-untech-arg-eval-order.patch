@@ -1,0 +1,32 @@
+diff --git a/bass/core/execute.cpp b/bass/core/execute.cpp
+index 9246c64..0f79a50 100644
+--- a/bass/core/execute.cpp
++++ b/bass/core/execute.cpp
+@@ -63,13 +63,15 @@ auto Bass::executeInstruction(Instruction& i) -> bool {
+ 
+   if(s.match("define ?*")) {
+     auto p = s.trimLeft("define ", 1L).split("=", 1L).strip();
+-    setDefine(p(0), {}, p(1), level);
++    string value = p(1);
++    setDefine(p(0), {}, value, level);
+     return true;
+   }
+ 
+   if(s.match("evaluate ?*")) {
+     auto p = s.trimLeft("evaluate ", 1L).split("=", 1L).strip();
+-    setDefine(p(0), {}, evaluate(p(1)), level);
++    string value = evaluate(p(1));
++    setDefine(p(0), {}, value, level);
+     return true;
+   }
+ 
+@@ -83,7 +85,8 @@ auto Bass::executeInstruction(Instruction& i) -> bool {
+ 
+   if(s.match("variable ?*")) {
+     auto p = s.trimLeft("variable ", 1L).split("=", 1L).strip();
+-    setVariable(p(0), evaluate(p(1)), level);
++    auto value = evaluate(p(1));
++    setVariable(p(0), value, level);
+     return true;
+   }
+ 
