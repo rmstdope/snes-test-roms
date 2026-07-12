@@ -3,8 +3,28 @@
 //
 // A simple split-buffer text buffer for printing monospace text and hexadecimal numbers.
 //
-// Copyright (c) 2022, Marcus Rowe <undisbeliever@gmail.com>.
-// Distributed under The MIT License: https://opensource.org/licenses/MIT
+// SPDX-FileCopyrightText: © 2022 Marcus Rowe <undisbeliever@gmail.com>
+// SPDX-License-Identifier: Zlib
+//
+// Copyright © 2022 Marcus Rowe <undisbeliever@gmail.com>
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the
+// use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose, including
+// commercial applications, and to alter it and redistribute it freely, subject to
+// the following restrictions:
+//
+//    1. The origin of this software must not be misrepresented; you must not
+//       claim that you wrote the original software. If you use this software in
+//       a product, an acknowledgment in the product documentation would be
+//       appreciated but is not required.
+//
+//    2. Altered source versions must be plainly marked as such, and must not be
+//       misrepresented as being the original software.
+//
+//    3. This notice may not be removed or altered from any source distribution.
 
 
 namespace TextBuffer {
@@ -534,6 +554,58 @@ function PrintString {
     stz.w   charBufferClean
 
 EmptyString:
+    rts
+}
+
+
+
+// Print a single hexadecimal digit, followed by a space or new line
+//
+// INPUT: A - 8 bit value
+//
+// DB = low-RAM
+a8()
+i16()
+code()
+function PrintOneHexDigitSpace_8A {
+constant _tmp = zpTmp0
+
+    assert(Font.ZERO + 10 == Font.CAPITAL_A)
+
+    ldx.w   cursorIndex
+    inx
+    cpx.w   endOfLineIndex
+    bcc     +
+        sta.b   _tmp
+        jsr     NewLine
+        ldx.w   cursorIndex
+        inx
+        lda.b   _tmp
+    +
+
+AfterX:
+    and.b   #0x0f
+    clc
+    adc.b   #Font.ZERO
+    sta.l   charBuffer - 1,x
+
+
+    // Print a space or new line
+    inx
+    cpx.w   endOfLineIndex
+    bcc     +
+        jsr     NewLine
+        bra     ++
+    +
+        stx.w   cursorIndex
+
+        lda.b   #Font.SPACE
+        sta.l   charBuffer - 1,x
+    +
+
+    // Transfer `charBuffer` to VRAM on the next VBlank
+    stz.w   charBufferClean
+
     rts
 }
 
