@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+cd "$(dirname "$0")"
+
+GIT_ROOT=$(git rev-parse --show-toplevel)
+TEMP_WD=$(mktemp -d)
+trap 'rm -rf "$TEMP_WD"' EXIT
+
+echo "Downloading the PPU GreenSpace demo repository into $TEMP_WD ..."
+cd "$TEMP_WD"
+git clone https://github.com/PeterLemon/SNES .
+
+echo "Extracting just the PPU GreenSpace demo..."
+git branch subtree-export $(git subtree split -P PPU/GreenSpace HEAD)
+
+echo "Merging the demo into our repo..."
+cd "$GIT_ROOT"
+git subtree pull -P PeterLemon/SNES-PPU-GreenSpace "$TEMP_WD" subtree-export
