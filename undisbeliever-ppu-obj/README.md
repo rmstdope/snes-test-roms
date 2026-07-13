@@ -15,13 +15,18 @@ From `src/hardware-tests/`:
 
   - `object-dropout-test.sfc` (v3): a static, self-running scene that
     exercises the PPU OBJ hardware limits on a single screen:
-      - **Time overflow**: 36 sprites sharing one scanline (only 32 can
-        be evaluated per line; the excess sprites drop out).
-      - **Range overflow**: rows of 16px-spaced sprites producing more
-        than 34 8x1 tile slivers on a line (excess slivers drop out),
-        plus a V/H-flipped variant of the same layout.
+      - 36 sprites sharing one scanline (only 32 can be evaluated per
+        line; the excess sprites drop out). This is the official
+        **range-over** limit ($213E bit 6), though the ROM source names
+        it `TimeOverflowTest`.
+      - Rows of 16px-spaced overlapping sprites producing more than 34
+        8x1 tile slivers on a line (excess slivers drop out), plus a
+        V/H-flipped variant. This is the official **time-over** limit
+        ($213E bit 7), though the ROM source names it
+        `RangeOverflowTest`.
       - **X=256 bug**: a sprite at X=256 counts against the
-        sprites/tiles-per-scanline limits even though it is off-screen.
+        sprites/slivers-per-scanline limits even though it is
+        off-screen.
     The scene uses 4bpp OBJ tiles, all eight OBJ palettes and OAM
     attribute flipping, sets up OAM/CGRAM/VRAM once via DMA during
     forced blank, and then idles forever — ideal for a screen-CRC
