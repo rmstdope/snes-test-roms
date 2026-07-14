@@ -7,7 +7,7 @@
 //
 // Skeleton derived from undisbeliever's object-dropout-test.asm.
 //
-// SPDX-FileCopyrightText: © 2026 NESER contributors
+// SPDX-FileCopyrightText: © 2026 Henrik Kurelid
 // SPDX-License-Identifier: Zlib
 
 define MEMORY_MAP = LOROM
