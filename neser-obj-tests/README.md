@@ -40,10 +40,7 @@ fetched.
   control. As of NESER #3003 the V-flipped wrapped sprite diverges from
   Mesen2, so this ROM has no approved golden yet.
 
-Parked (unused) OAM entries sit at X=256 via the high-table X bit 8
-rather than the usual y=240 filler: at X=256 a sprite is invisible at
-every size, whereas 32px-tall sprites at y=240 wrap into screen lines
-0-15 (and still consume per-scanline evaluation limits).
+Parked (unused) OAM entries are placed at X=256 via the high-table X bit 8 in the tests where the usual y=240 filler would wrap (notably OBSEL 6/7 and `obj-y-wrap`). Other ROMs use the usual y=240 filler because their unused sprites are 8px/16px tall and do not wrap into the visible area.
 
 ## Rebuilding
 
