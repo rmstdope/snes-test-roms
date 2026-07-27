@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$(dirname "$0")/.."
+
+git subtree pull -P ddribin-hdrv-snes-test/hdrv-snes-test https://github.com/ddribin/hdrv-snes-test.git main
