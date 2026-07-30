@@ -37,8 +37,11 @@ fetched.
   pair wins, plus an unaffected control pair.
 - `obj-y-wrap.sfc`: sprites at y=240 wrapping around to the top of the
   screen (16x32 size), unflipped and V-flipped, plus a fully visible
-  control. As of NESER #3003 the V-flipped wrapped sprite diverges from
-  Mesen2, so this ROM has no approved golden yet.
+  control. The V-flipped wrapped sprite shows tiles 30/31 above 20/21:
+  rectangular OBJs flip as two stacked squares, so the wrapped lower half
+  mirrors within itself rather than against the full height. Golden
+  approved in NESER #3003 against ares/higan/Snes9x and the SNESdev wiki
+  rather than Mesen2, which diverges here (it renders F0/F1 above E0/E1).
 
 Parked (unused) OAM entries are placed at X=256 via the high-table X bit 8 in the tests where the usual y=240 filler would wrap (notably OBSEL 6/7 and `obj-y-wrap`). Other ROMs use the usual y=240 filler because their unused sprites are 8px/16px tall and do not wrap into the visible area.
 
