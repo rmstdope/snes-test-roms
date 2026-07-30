@@ -8,9 +8,15 @@
 //     00/01, 10/11, 20/21, 30/31 top to bottom.
 //   - wrap: the same sprite at (128, 240): rows 2-3 (tiles 20/21 and
 //     30/31) must appear at screen lines 0-15.
-//   - wrap + V flip: at (192, 240): the visible wrapped rows are the
-//     flipped rows 0-1 (tiles 10/11 above 00/01, each glyph upside
-//     down).
+//   - wrap + V flip: at (192, 240): tiles 30/31 above 20/21, each glyph
+//     upside down. Rectangular OBJs flip as two stacked squares -- each
+//     16-row half mirrors in place and the halves do NOT swap ("rows
+//     01234567 flip to 32107654, not 76543210", SNESdev wiki OAM page) --
+//     so the wrapped window is the sprite's lower half mirrored within
+//     itself: the SAME tile rows the unflipped sprite shows, in reverse
+//     order. (This comment previously predicted tiles 10/11 above 00/01,
+//     which assumes a naive whole-sprite flip that hardware does not do;
+//     corrected in NESER #3003.)
 //
 // Skeleton derived from undisbeliever's object-dropout-test.asm.
 //
